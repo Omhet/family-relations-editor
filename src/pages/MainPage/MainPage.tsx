@@ -1,13 +1,13 @@
-import { Example } from '@containers/Example';
-import React, { FunctionComponent } from 'react';
+import { Editor } from '@components/Editor/Editor';
+import React, { FC } from 'react';
 import classes from './MainPage.module.scss';
 
 export interface MainPageProps {}
 
-export const MainPage: FunctionComponent = () => {
+export const MainPage: FC = () => {
   return (
     <div className={classes.main}>
-      <Example />
+      <Editor />
     </div>
   );
 };
