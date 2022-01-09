@@ -30,16 +30,22 @@ export const Editor: FC<EditorProps> = ({}) => {
       const node = newRel[nodeId];
       const spouse = newRel[spouseId];
 
-      node.spouses.push({ type: RelType.married, id: spouseId });
-      spouse.spouses.push({ type: RelType.married, id: nodeId });
+      node.spouses[0] = { type: RelType.married, id: spouseId };
+      spouse.spouses[0] = { type: RelType.married, id: nodeId };
 
       return newRel;
     });
   };
 
+  const exportRel = () => {
+    downloadJSON(Object.values(relations));
+  };
+
   return (
     <div className={classes.main}>
-      <button className={classes.export}>Экспорт</button>
+      <button onClick={() => exportRel()} className={classes.export}>
+        Экспорт
+      </button>
       <div className={classes.nodes}>
         {nodesData.map((node) => (
           <EditorNode key={node.id} id={node.id} relations={relations} onSpouseChange={setSpouse} />
@@ -47,4 +53,12 @@ export const Editor: FC<EditorProps> = ({}) => {
       </div>
     </div>
   );
+};
+
+const downloadJSON = (data: any) => {
+  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute('href', dataStr);
+  dlAnchorElem.setAttribute('download', 'relations.json');
+  dlAnchorElem.click();
 };
