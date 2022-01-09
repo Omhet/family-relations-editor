@@ -25,6 +25,8 @@ export const Editor: FC<EditorProps> = ({}) => {
   const [relations, setRelations] = useState<TreeNodeMap>(() => nodesDataRelMap);
 
   const setSpouse = (nodeId: string, spouseId: string) => {
+    console.log('setSpouse', nodeId, spouseId);
+
     setRelations((prevRel) => {
       const newRel = { ...prevRel };
       const node = newRel[nodeId];
@@ -32,6 +34,35 @@ export const Editor: FC<EditorProps> = ({}) => {
 
       node.spouses[0] = { type: RelType.married, id: spouseId };
       spouse.spouses[0] = { type: RelType.married, id: nodeId };
+
+      return newRel;
+    });
+  };
+
+  const addChild = (nodeId: string, childId: string) => {
+    console.log('addChild', nodeId, childId);
+
+    setRelations((prevRel) => {
+      const newRel = { ...prevRel };
+      const node = newRel[nodeId];
+      const spouseId = node.spouses[0]?.id;
+      const spouse = newRel[spouseId];
+      const child = newRel[childId];
+
+      child.siblings = [...prevRel[nodeId].children];
+
+      for (const { id } of node.children) {
+        const sibling = prevRel[id];
+        sibling.siblings.push({ type: RelType.blood, id: childId });
+      }
+
+      node.children.push({ type: RelType.blood, id: childId });
+      child.parents.push({ type: RelType.blood, id: nodeId });
+
+      if (spouse) {
+        spouse.children.push({ type: RelType.blood, id: childId });
+        child.parents.push({ type: RelType.blood, id: spouseId });
+      }
 
       return newRel;
     });
@@ -48,7 +79,13 @@ export const Editor: FC<EditorProps> = ({}) => {
       </button>
       <div className={classes.nodes}>
         {nodesData.map((node) => (
-          <EditorNode key={node.id} id={node.id} relations={relations} onSpouseChange={setSpouse} />
+          <EditorNode
+            key={node.id}
+            id={node.id}
+            relations={relations}
+            onSpouseChange={setSpouse}
+            onChildAdd={addChild}
+          />
         ))}
       </div>
     </div>

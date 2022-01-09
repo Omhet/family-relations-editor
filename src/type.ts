@@ -1,15 +1,16 @@
-export type Relation = Readonly<{
+export type Relation = {
   id: string;
   type: RelType;
-}>;
-export type TreeNode = Readonly<{
+};
+
+export type TreeNode = {
   id: string;
   parents: Relation[];
   children: Relation[];
   siblings: Relation[];
   spouses: Relation[];
   placeholder?: boolean;
-}>;
+};
 
 export enum RelType {
   blood = 'blood',
